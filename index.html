@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نبض - هوية وتواصل</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f3f0ff;
+      color: #171426;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    body.vip {
+      background: #0c0a12;
+      color: #fffbeb;
+    }
+    header {
+      background: #6c3ce9;
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      gap: 8px;
+    }
+    body.vip header {
+      background: #d97706;
+      color: #140f02;
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+    }
+    .logo-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6c3ce9, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(108, 60, 233, 0.28);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    body.vip .logo-wrap {
+      background: linear-gradient(135deg, #f59e0b, #b45309);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+    }
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .vip-btn {
+      background: #f59e0b;
+      color: #140f02;
+    }
+    .box {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .card {
+      background: #ffffff;
+      color: #171426;
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+    body.vip .card {
+      background: #1a152b;
+      color: #fffbeb;
+      border: 1px solid #f59e0b;
+    }
+    .identity-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tagline {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 3px;
+    }
+    .room-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      background: #eae4ff;
+      color: #6c3ce9;
+      font-weight: bold;
+    }
+    body.vip .badge {
+      background: #2b2109;
+      color: #fbbf24;
+    }
+    .msgs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 45vh;
+      overflow-y: auto;
+    }
+    .bubble {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #eae4ff;
+      color: #171426;
+      max-width: 85%;
+      align-self: flex-start;
+    }
+    body.vip .bubble {
+      background: #2a213d;
+      color: #fffbeb;
+    }
+    .sender {
+      display: block;
+      font-size: 11px;
+      font-weight: bold;
+      opacity: 0.75;
+      margin-bottom: 3px;
+    }
+    .bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+    .send-btn {
+      background: #6c3ce9;
+      color: #fff;
+    }
+    body.vip .send-btn {
+      background: #f59e0b;
+      color: #140f02;
+    }
+    .status-note {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    .about-box {
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+    #toastBox {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #171426;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: bold;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    body.vip #toastBox {
+      background: #f59e0b;
+      color: #140f02;
+    }
+    #toastBox.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-title">
+      <span>نبض • v1.4</span>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="openAbout()">عن نبض</button>
+      <button onclick="setName()">اسمي</button>
+      <button class="vip-btn" onclick="toggleVip()">VIP</button>
+    </div>
+  </header>
+
+  <div class="box" id="homeView">
+    <div class="card identity-banner">
+      <div class="logo-wrap" id="appLogoBox">
+        <img src="logo.png" alt="شعار نبض" onerror="this.style.display='none';document.getElementById('svgLogo').style.display='block';" />
+        <svg id="svgLogo" style="display:none;width:32px;height:32px;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong style="font-size:16px;">نبض • Nabd</strong>
+          <span class="badge" id="tierBadge">عادي</span>
+        </div>
+        <div class="tagline" id="brandSlogan">منصة تواصل مستقلة بهوية عصرية.</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;">
+          <span>الحساب: <strong id="myName">مستخدم نبض</strong></span>
+          <span class="status-note">متصل مباشر</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card room-btn" onclick="enterRoom('general')">
+      <div>
+        <strong>الغرفة العامة</strong>
+        <div class="status-note">تواصل عام بين المستخدمين</div>
+      </div>
+      <span class="badge">عام</span>
+    </div>
+
+    <div class="card room-btn" onclick="enterRoom('vip_hall')">
+      <div>
+        <strong>صالة VIP</strong>
+        <div class="status-note">غرفة النخبة المميزة</div>
+      </div>
+      <span class="badge">VIP 👑</span>
+    </div>
+  </div>
+
+  <div class="box" id="aboutView" style="display:none;">
+    <div class="card about-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong style="font-size:16px;">الهوية التعريفية لتطبيق نبض</strong>
+        <button onclick="closeAbout()">رجوع</button>
+      </div>
+      <p style="margin:6px 0;"><strong>الاسم:</strong> نبض (Nabd) — الإصدار v1.4</p>
+      <p style="margin:6px 0;"><strong>الفكرة:</strong> تطبيق مراسلة مستقل بهوية خاصة، يجمع بين الخفة والسرعة في الوضع العادي والفخامة الذهبية في وضع VIP 👑.</p>
+      <p style="margin:6px 0;"><strong>الاستقلالية:</strong> يعمل كمنصة مستقلة بذاتها ولا يعتمد على أي حسابات أو تطبيقات خارجية.</p>
+    </div>
+  </div>
+
+  <div class="box" id="roomView" style="display:none;">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong id="roomTitle">الغرفة</strong>
+          <button onclick="leaveRoom()">رجوع</button>
+        </div>
+        <div class="msgs" id="liveMsgs"></div>
+      </div>
+      <div class="bar">
+        <input id="liveInput" type="text" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter') sendLiveMsg()" />
+        <button class="send-btn" onclick="sendLiveMsg()">إرسال</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastBox"></div>
+
+  <script>
+    const DB_URL = "https://nabd-app-75275-default-rtdb.europe-west1.firebasedatabase.app";
+
+    const USER_KEY = "nabd_user_info";
+    let userInfo = JSON.parse(localStorage.getItem(USER_KEY)) || {
+      name: "مستخدم نبض",
+      vip: false
+    };
+
+    let currentRoom = null;
+    let pollTimer = null;
+    let toastTimer = null;
+    let lastMsgCount = 0;
+
+    function notify(msg) {
+      const box = document.getElementById("toastBox");
+      box.textContent = msg;
+      box.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        box.classList.remove("show");
+      }, 2400);
+    }
+
+    function saveUser() {
+      localStorage.setItem(USER_KEY, JSON.stringify(userInfo));
+      renderHeader();
+    }
+
+    function renderHeader() {
+      document.body.classList.toggle("vip", userInfo.vip);
+      document.getElementById("myName").textContent = userInfo.name;
+      document.getElementById("tierBadge").textContent = userInfo.vip ? "VIP 👑" : "عادي";
+      document.getElementById("brandSlogan").textContent = userInfo.vip
+        ? "وضع VIP الذهبي مفعل — واجهة مميزة وهوية حصرية."
+        : "منصة تواصل مستقلة بهوية عصرية.";
+    }
+
+    function toggleVip() {
+      userInfo.vip = !userInfo.vip;
+      saveUser();
+      notify(userInfo.vip ? "تم تفعيل وضع VIP الذهبي 👑" : "تم الرجوع للوضع العادي");
+    }
+
+    function setName() {
+      const n = prompt("اكتب اسمك اللي يظهر للناس:", userInfo.name);
+      if (n && n.trim()) {
+        userInfo.name = n.trim();
+        saveUser();
+        notify("تم حفظ الاسم: " + userInfo.name);
+      }
+    }
+
+    function openAbout() {
+      clearInterval(pollTimer);
+      document.getElementById("homeView").style.display = "none";
+      document.getElementById("roomView").style.display = "none";
+      document.getElementById("aboutView").style.display = "flex";
+    }
+
+    function closeAbout() {
+      document.getElementById("aboutView").style.display = "none";
+      document.getElementById("homeView").style.display = "flex";
+    }
+
+    function isDbConfigured() {
+      return DB_URL.startsWith("https://") && !DB_URL.includes("YOUR-PROJECT");
+    }
+
+    async function enterRoom(roomId) {
+      currentRoom = roomId;
+      lastMsgCount = 0;
+      document.getElementById("homeView").style.display = "none";
+      document.getElementById("aboutView").style.display = "none";
+      document.getElementById("roomView").style.display = "flex";
+      document.getElementById("roomTitle").textContent = roomId === "vip_hall" ? "صالة VIP 👑" : "الغرفة العامة";
+      await fetchMessages(true);
+      clearInterval(pollTimer);
+      pollTimer = setInterval(() => fetchMessages(false), 2500);
+    }
+
+    function leaveRoom() {
+      currentRoom = null;
+      clearInterval(pollTimer);
+      document.getElementById("roomView").style.display = "none";
+      document.getElementById("homeView").style.display = "flex";
+    }
+
+    async function fetchMessages(isInitial) {
+      if (!currentRoom) return;
+      const area = document.getElementById("liveMsgs");
+
+      if (!isDbConfigured()) {
+        area.innerHTML = `<div class="bubble"><span class="sender">تنبيه</span>خلّي رابط Firebase الحقيقي بمكان DB_URL حتى تبدي الرسائل تشتغل بين الأجهزة.</div>`;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${DB_URL}/rooms/${currentRoom}.json`);
+        const data = await res.json();
+        if (!data) {
+          lastMsgCount = 0;
+          area.innerHTML = `<div class="bubble"><span class="sender">نبض</span>ماكو رسائل بعد، ابدأ أول رسالة!</div>`;
+          return;
+        }
+        const items = Object.values(data);
+        if (!isInitial && items.length > lastMsgCount) {
+          const newest = items[items.length - 1];
+          if (newest && newest.sender !== userInfo.name) {
+            notify(`رسالة جديدة من ${newest.sender}`);
+          }
+        }
+        lastMsgCount = items.length;
+        area.innerHTML = items.map(m => `
+          <div class="bubble">
+            <span class="sender">${m.sender || "مستخدم"} ${m.vip ? "👑" : ""}</span>
+            ${m.text}
+          </div>
+        `).join("");
+        area.scrollTop = area.scrollHeight;
+      } catch (e) {
+        area.innerHTML = `<div class="bubble"><span class="sender">خطأ اتصال</span>تأكد من الرابط أو الإنترنت.</div>`;
+      }
+    }
+
+    async function sendLiveMsg() {
+      const inp = document.getElementById("liveInput");
+      const text = inp.value.trim();
+      if (!text || !currentRoom || !isDbConfigured()) return;
+
+      inp.value = "";
+      await fetch(`${DB_URL}/rooms/${currentRoom}.json`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender: userInfo.name,
+          vip: userInfo.vip,
+          text,
+          time: Date.now()
+        })
+      });
+      await fetchMessages(true);
+      notify("تم إرسال الرسالة");
+    }
+
+    renderHeader();
+  </script>
+</body>
+</html>
