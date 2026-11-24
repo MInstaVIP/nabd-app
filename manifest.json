@@ -1,11 +1,21 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
-  "name": "Nabd",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "Nabd",
-  "start_url": "/",
-  "theme_color": "#ffffff"
+  "name": "Nabd",
+  "icons": [
+    {
+      "src": "./logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#4b00ff",
+  "background_color": "#ffffff"
 }
